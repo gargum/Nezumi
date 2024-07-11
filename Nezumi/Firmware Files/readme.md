@@ -1,11 +1,11 @@
 # Build Instructions
 
-This is a folder one can use QMK to install.
+This is a folder full of one can use QMK to install onto one's Nezumi.
 
-To do that, first use Git to download QMK, specifically the master repo.
+To do this, first use Git to download QMK, specifically the master repo.
 
 After QMK has been installed onto one's machine, simply copy the nezumi folder
-into the ~/qmk_firmware/keyboards directory, before typing . . .
+into the ~/qmk_firmware/keyboards directory, before entering the command . . .
 
 qmk flash -kb nezumi -km default
 
