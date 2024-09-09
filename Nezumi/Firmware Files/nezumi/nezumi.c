@@ -3,50 +3,50 @@ This file exists primarily to allow for more advanced Cirque/Pointer configurati
 */
 
 #include "nezumi.h"
-
-bool set_arrow = false;
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    if (set_arrow == true) {
-        if (mouse_report.x > 1023) {
-            mouse_report.x = 0;
-            
-            unregister_code(KC_LEFT);
+#include "keyboard.h"
+#include "drivers/sensors/cirque_pinnacle.h"
+ 
+ layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+    case 0:
+        break;
+    case 1:
+        pinnacle_data_t absolute_coordinates = cirque_pinnacle_read_data();
+        
+        if(absolute_coordinates.xValue > 1700){
             register_code(KC_RGHT);
-        }
-        else if (mouse_report.x < 1023) {
-            mouse_report.x = 0;
-            
-            unregister_code(KC_RGHT);
-            register_code(KC_LEFT);
-        }
-        else {
             unregister_code(KC_LEFT);
+            unregister_code(KC_DOWN);
+            unregister_code(KC_UP);
+        }else if(absolute_coordinates.xValue < 400 && absolute_coordinates.xValue > 0){
+            register_code(KC_LEFT);
             unregister_code(KC_RGHT);
+            unregister_code(KC_DOWN);
+            unregister_code(KC_UP);
+        }else if(absolute_coordinates.yValue > 1200){
+            register_code(KC_DOWN);
+            unregister_code(KC_UP);
+            unregister_code(KC_RGHT);
+            unregister_code(KC_LEFT);
+        }else if(absolute_coordinates.yValue < 400 && absolute_coordinates.yValue > 0){
+            register_code(KC_UP);
+            unregister_code(KC_DOWN);
+            unregister_code(KC_RGHT);
+            unregister_code(KC_LEFT);
+        }else{
+            unregister_code(KC_RGHT);
+            unregister_code(KC_LEFT);
+            unregister_code(KC_DOWN);
+            unregister_code(KC_UP);
         }
         
-        if (mouse_report.y > 767) {
-            mouse_report.y = 0;
-            
-            unregister_code(KC_DOWN);
-            register_code(KC_UP);
-        }
-        else if (mouse_report.y < 767) {
-            mouse_report.y = 0;
-            
-            unregister_code(KC_UP);
-            register_code(KC_DOWN);
-        }
-        else {
-            unregister_code(KC_UP);
-            unregister_code(KC_DOWN);
-        }
+        unregister_code(KC_RGHT);
+        unregister_code(KC_LEFT);
+        unregister_code(KC_DOWN);
+        unregister_code(KC_UP);
+        break;
+    default:
+        break;
     }
-    return mouse_report;
-}
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (keycode == KC_SYRQ && record->event.pressed) {
-        set_arrow = !set_arrow;
-    }
-    return true;
+  return state;
 }
