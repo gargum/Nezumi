@@ -4,6 +4,7 @@
 
 enum layers {
     _MAIN,
+    _ARROW
 };
 
 typedef enum presses {
@@ -34,6 +35,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_MAIN] = LAYOUT_nezumi(
     KC_WH_U, KC_BTN1,
     KC_WH_D, KC_BTN2
+  ),
+  [_ARROW] = LAYOUT_nezumi(
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   )
 };
 
@@ -74,9 +79,9 @@ void x_finished (tap_dance_state_t *state, void *user_data) {
   xtap_state.state = cur_dance(state);
   switch (xtap_state.state) {
     case TD_SINGLE_TAP: register_code(KC_MPLY); break;
-    case TD_SINGLE_HOLD: register_code(KC_SYRQ); break;
+    case TD_SINGLE_HOLD: layer_on(_ARROW); break;
     case TD_DOUBLE_TAP: register_code(KC_MPLY); unregister_code(KC_MPLY); register_code(KC_MPLY); break;
-    case TD_DOUBLE_HOLD: register_code(KC_SYRQ); unregister_code(KC_SYRQ); register_code(KC_SYRQ); break;
+    case TD_DOUBLE_HOLD: layer_on(_ARROW); layer_off(_ARROW); layer_on(_ARROW); break;
     case TD_DOUBLE_SINGLE_TAP: register_code(KC_MPLY); unregister_code(KC_MPLY); register_code(KC_MPLY);
     case TD_NONE: break;
     case TD_UNKNOWN: break;
@@ -90,9 +95,9 @@ void x_finished (tap_dance_state_t *state, void *user_data) {
 void x_reset (tap_dance_state_t *state, void *user_data) {
   switch (xtap_state.state) {
     case TD_SINGLE_TAP: unregister_code(KC_MPLY); break;
-    case TD_SINGLE_HOLD: unregister_code(KC_SYRQ); break;
+    case TD_SINGLE_HOLD: layer_off(_ARROW); break;
     case TD_DOUBLE_TAP: unregister_code(KC_MPLY); break;
-    case TD_DOUBLE_HOLD: unregister_code(KC_SYRQ); break;
+    case TD_DOUBLE_HOLD: layer_off(_ARROW); break;
     case TD_DOUBLE_SINGLE_TAP: unregister_code(KC_MPLY);
     case TD_NONE: break;
     case TD_UNKNOWN: break;
@@ -104,3 +109,17 @@ void x_reset (tap_dance_state_t *state, void *user_data) {
 tap_dance_action_t tap_dance_actions[] = {
     [ARROW_DANCE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, x_finished, x_reset)
 };
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_SYRQ:
+            if(record->event.pressed){
+                layer_on(_ARROW);
+            }else{
+                layer_off(_ARROW);
+            }
+            return false;
+        default:
+            return true;
+    }
+}
