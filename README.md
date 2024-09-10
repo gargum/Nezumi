@@ -24,4 +24,4 @@ A macropad with a built-in trackpad
 | Left Two Buttons | N/A | Browser Back  |
 | Right Two Buttons | N/A | Browser Forward  |
 | Tap All Four Buttons | N/A | Play / Pause  |
-| Hold All Four Buttons | N/A | COMING SOON: Arrow Key Mode  |
+| Hold All Four Buttons | Tap a Quadrant on the Trackpad | Arrow Keys |
